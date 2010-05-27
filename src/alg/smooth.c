@@ -25,10 +25,10 @@ static void smooth_row(unsigned char *r, /* result    */
         else */
         /* clearing black pixels doesn't look cool, alas */
 
-        if (score < 0)
-            r[i] = 0;
-        else
+        if (score <= 0)
             r[i] = t[i];
+        else
+            r[i] = 1;
     }
 }
 
