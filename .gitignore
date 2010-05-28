@@ -3,9 +3,11 @@
 *.d
 /Makefile
 /bin/
+/configure
 /config.h
 /config.log
 /config.status
+/libtool
 /m4/
 /minidjvu/Makefile
 /minidjvu/obj/

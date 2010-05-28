@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include <cv.h>
 
 #define TIMES_TO_THIN 1
 #define TIMES_TO_THICKEN 1
@@ -117,6 +118,7 @@ typedef struct ComparableImageData
     int32 mass_center_x, mass_center_y;
     byte signature[SIGNATURE_SIZE];  /* for shiftdiff 1 and 3 tests */
     byte signature2[SIGNATURE_SIZE]; /* for shiftdiff 2 test */
+    IplImage *img;
 } Image;
 
 
@@ -544,6 +546,16 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_op
         img->pith2_outer = NULL;
     }
 
+    img->img = cvCreateImage(cvSize(w, h), IPL_DEPTH_8U, 1);
+    
+    for (i = 0; i < h; i++)
+    {
+        int32 j;
+	uchar *row = (uchar *)(img->img->imageData + i * img->img->widthStep);
+        for (j = 0; j < w; j++)
+	  row[j]=pixels[i][j];
+    }
+    
     return (mdjvu_pattern_t) img;
 }/*}}}*/
 
@@ -667,6 +679,9 @@ static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
             state |= i;
         }
     #endif
+
+    double diff = cvMatchShapes(i1->img, i2->img, CV_CONTOURS_MATCH_I2, 0);
+    printf("state %d, diff=%f\n", state, diff);
 
     return state;
 }/*}}}*/

@@ -102,6 +102,11 @@ jpeg_ok='no'
 AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
     [jpeg_libs="-ljpeg"; jpeg_ok='yes'])
 
+PKG_PROG_PKG_CONFIG()
+PKG_CHECK_MODULES([OPENCV], [opencv])
+CFLAGS="$CFLAGS $OPENCV_CFLAGS"
+LIBS="$LIBS $OPENCV_LIBS"
+
 # Checks for header files.
 
 if test "$tiff" != 'no'; then
@@ -204,8 +209,8 @@ AC_TYPE_SIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 
-CFLAGS="$CFLAGS -Wall -Wshadow"
-CFLAGS="$CFLAGS -pedantic-errors -Wpointer-arith -Waggregate-return"
+CFLAGS="$CFLAGS -std=c99 -Wall -Wshadow"
+CFLAGS="$CFLAGS -pedantic -Wpointer-arith -Waggregate-return"
 CFLAGS="$CFLAGS -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
 DEFS="$DEFS -D__STRICT_ANSI__ -DNDEBUG"
 OPTS="-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations"
