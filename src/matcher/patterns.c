@@ -302,9 +302,11 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
 static int32 pithdiff_compare_row(byte *row1, byte *row2, int32 n)
 {
     int32 i, s = 0;
+    int32 k, l;
+#pragma omp parallel for private(k,l) reduction(+:s) schedule(static,1)
     for (i = 0; i < n; i++)
     {
-        int32 k = row1[i], l = row2[i];
+      k = row1[i]; l = row2[i];
         if (k == 255)
             s += 255 - l;
         else if (l == 255)
@@ -426,13 +428,14 @@ MDJVU_IMPLEMENT void mdjvu_pattern_get_center(mdjvu_pattern_t p, int32 *cx, int3
 static void sweep(unsigned char **pixels, unsigned char **source, int w, int h)
 {
     int x, y;
-
+    unsigned char *row, *srow, *supper, *slower;
+#pragma omp parallel for private(x,row,srow,supper,slower)
     for (y = 0; y < h; y++)
     {
-        unsigned char *row    = pixels[y];
-        unsigned char *srow   = source[y];
-        unsigned char *supper = source[y-1];
-        unsigned char *slower = source[y+1];
+        row    = pixels[y];
+        srow   = source[y];
+        supper = source[y-1];
+        slower = source[y+1];
 
         for (x = 0; x < w; x++)
         {

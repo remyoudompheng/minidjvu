@@ -15,10 +15,11 @@ static void smooth_row(unsigned char *r, /* result    */
                        unsigned char *l, /* lower row */
                        int32 n)
 {
-    int32 i;
+    int32 i; int score;
+#pragma omp parallel for private(score) schedule(static, 1)
     for (i = 0; i < n; i++)
     {
-        int score = u[i] + l[i] + t[i-1] + t[i+1] - 2;
+        score = u[i] + l[i] + t[i-1] + t[i+1] - 2;
 
         /* if (score > 0)
             r[i] = 1;

@@ -17,13 +17,15 @@ def configure(conf):
     conf.check(header_name='tiffio.h', define_name='HAVE_TIFF')
     conf.check(lib='tiff')
 
+    conf.check(lib='gomp')
+
     conf.check(header_name='libintl.h', define_name='HAVE_I18N')
 
     conf.check(header_name='stdint.h', define_name='HAVE_STDINT_H')
     conf.write_config_header('config.h') # included from mdjvucfg.h
   
     # Compilation flags 
-    common_cflags = '-pipe -O3 -Wall -DHAVE_CONFIG_H -DNDEBUG'.split()
+    common_cflags = '-pipe -O3 -fopenmp -Wall -DHAVE_CONFIG_H -DNDEBUG'.split()
     conf.env.append_value('CCFLAGS', common_cflags + '''
         -D__STRICT_ANSI__ -Wshadow -pedantic-errors 
         -Wpointer-arith -Waggregate-return -Wlong-long 
@@ -39,7 +41,7 @@ def build(bld):
         target = 'minidjvu',
         includes = '# include', # '#' is where config.h is generated
         install_path = '${PREFIX}/lib',
-        uselib = 'M TIFF'
+        uselib = 'M TIFF GOMP'
     )
     
     bld.new_task_gen(
