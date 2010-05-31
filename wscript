@@ -50,7 +50,7 @@ def build(bld):
         target = 'minidjvu',
         includes = '# include',
         install_path = '${PREFIX}/bin',
-        uselib = 'M TIFF',
+        uselib = 'M TIFF GOMP',
         uselib_local = 'minidjvu'
     )
    

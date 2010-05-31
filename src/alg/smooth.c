@@ -16,7 +16,7 @@ static void smooth_row(unsigned char *r, /* result    */
                        int32 n)
 {
     int32 i; int score;
-#pragma omp parallel for private(score) schedule(static, 1)
+#pragma omp parallel for private(score) schedule(static)
     for (i = 0; i < n; i++)
     {
         score = u[i] + l[i] + t[i-1] + t[i+1] - 2;

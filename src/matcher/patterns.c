@@ -303,7 +303,7 @@ static int32 pithdiff_compare_row(byte *row1, byte *row2, int32 n)
 {
     int32 i, s = 0;
     int32 k, l;
-#pragma omp parallel for private(k,l) reduction(+:s) schedule(static,1)
+#pragma omp parallel for private(k,l) reduction(+:s) schedule(static)
     for (i = 0; i < n; i++)
     {
       k = row1[i]; l = row2[i];
@@ -429,7 +429,7 @@ static void sweep(unsigned char **pixels, unsigned char **source, int w, int h)
 {
     int x, y;
     unsigned char *row, *srow, *supper, *slower;
-#pragma omp parallel for private(x,row,srow,supper,slower)
+#pragma omp parallel for private(x,row,srow,supper,slower) schedule(static)
     for (y = 0; y < h; y++)
     {
         row    = pixels[y];
