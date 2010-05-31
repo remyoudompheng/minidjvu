@@ -154,7 +154,7 @@ static void find_prototypes
     }
 
     /* destroy uncompressed bitmaps */
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for private(i) schedule(static)
     for (i = 0; i < n; i++)
     {
         mdjvu_destroy_2d_array(uncompressed_bitmaps[i]);
