@@ -25,7 +25,7 @@ def configure(conf):
     conf.write_config_header('config.h') # included from mdjvucfg.h
   
     # Compilation flags 
-    common_cflags = '-pipe -O3 -fopenmp -Wall -DHAVE_CONFIG_H -DNDEBUG'.split()
+    common_cflags = '-pipe -g -O3 -fopenmp -Wall -DHAVE_CONFIG_H -DNDEBUG'.split()
     conf.env.append_value('CCFLAGS', common_cflags + '''
         -D__STRICT_ANSI__ -Wshadow -pedantic-errors 
         -Wpointer-arith -Waggregate-return -Wlong-long 

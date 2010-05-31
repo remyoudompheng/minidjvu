@@ -186,10 +186,11 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
     int32 max_overlap_x_plus_1_for_i1 = max_overlap_x_plus_1 - shift_x;
     int32 overlap_length = max_overlap_x_plus_1 - min_overlap_x;
     int32 score = 0;
-    int maxint = 0;
-    if (overlap_length <= 0) return INT32_MAX;
 
-#pragma omp parallel for private(i) reduction(+:score) reduction(||:maxint) schedule(static)
+    int32 overflow = 0;
+
+    if (overlap_length <= 0) return INT32_MAX;
+#pragma omp parallel for private(i) reduction(+:score) reduction(|:overflow) schedule(static)
     for (i = min_y; i < max_y_plus_1; i++)
     {
         int32 y1 = i - shift_y;
@@ -236,9 +237,9 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
             }
         }
 
-        if (score >= ceiling) maxint = 1;
+        if (score >= ceiling) overflow = 1;
     }
-    if (maxint) return INT32_MAX;
+    if (overflow) return INT32_MAX;
     return score;
 }
 
@@ -304,7 +305,6 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
 static int32 pithdiff_compare_row(byte *row1, byte *row2, int32 n)
 {
     int32 i, s = 0;
-    /* #pragma omp parallel for private(i) reduction(+:s) schedule(static) */
     for (i = 0; i < n; i++)
     {
       int32 k, l;
@@ -430,7 +430,6 @@ MDJVU_IMPLEMENT void mdjvu_pattern_get_center(mdjvu_pattern_t p, int32 *cx, int3
 static void sweep(unsigned char **pixels, unsigned char **source, int w, int h)
 {
     int x, y;
-#pragma omp parallel for private(y,x) schedule(static)
     for (y = 0; y < h; y++)
     {
         unsigned char *row    = pixels[y];
@@ -507,7 +506,6 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_op
     memset(img->pixels[0], 0, w * h);
 
     mass = 0;
-#pragma omp parallel for private(i,j) reduction(+:mass) schedule(static)
     for (i = 0; i < h; i++)
     {
         for (j = 0; j < w; j++)
